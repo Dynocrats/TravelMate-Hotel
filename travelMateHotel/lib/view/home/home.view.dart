@@ -80,18 +80,47 @@ class _HomeState extends State<Home> {
                             ),
                             Expanded(
                               child: Container(
+                                margin: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
                                 width: MediaQuery.of(context).size.width,
                                 child:  Row(
                                   children: [
                                     Expanded(
-                                      child: Container(
-                                        child: Text('data'),
-                                      ),
+                                      child:Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text('HOTEL NAME', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),),
+                                          SizedBox(height: 5.0,),
+                                          Row(
+                                            children: [
+                                              Text('FEATURES'),
+                                              SizedBox(width: 20.0,),
+                                              Icon(Icons.king_bed),
+                                              Icon(Icons.wifi),
+                                              Icon(Icons.train)
+                                            ],
+                                          )
+                                        ],
+                                      )
                                     ),
                                     Expanded(
-                                      child: Container(
-                                        child: Text('panama'),
-                                      ),
+                                      child:Column(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text('For Day  USD8.50', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 15),),
+                                          SizedBox(height: 5.0,),
+                                          Row(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            children: [
+                                              SizedBox(width: 50.0,),
+                                              Icon(Icons.star, color: Colors.yellow,),
+                                              Icon(Icons.star, color: Colors.yellow,),
+                                              Icon(Icons.star, color: Colors.yellow,),
+                                              Icon(Icons.star),
+                                              Icon(Icons.star),
+                                            ],
+                                          )
+                                        ],
+                                      )
                                     )
                                   ],
                                 ),
