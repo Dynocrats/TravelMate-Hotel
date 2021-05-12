@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:travelMateHotel/provider/google.signin.dart';
+import 'package:travelMateHotel/view/navigationBar/navigation.view.dart';
 import 'package:travelMateHotel/widget/background.painter.dart';
-import 'package:travelMateHotel/widget/logged.in.widget.dart';
 import 'package:travelMateHotel/widget/sign.up.widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
             if (provider.isSigningIn) {
               return buildLoading();
             } else if (snapshot.hasData) {
-              return LoggedInWidget();
+              return NavigationBar();
             } else {
               return SignUpWidget();
             }
