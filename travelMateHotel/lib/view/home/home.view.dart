@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travelMateHotel/view/postView/post.view.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -43,10 +44,10 @@ class _HomeState extends State<Home> {
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => PostView()),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PostView()),
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(top: 15, left: 5, right: 5),
