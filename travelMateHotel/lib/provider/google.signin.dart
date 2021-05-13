@@ -36,7 +36,7 @@ class GoogleSignInProvider extends ChangeNotifier {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       saveLoginUser();
-      isSigningIn = false;
+      isSigningIn = false; 
     }
   }
 
@@ -47,7 +47,15 @@ class GoogleSignInProvider extends ChangeNotifier {
       'userName': user.displayName,
       'userEmail': user.email,
       'userImageUrl': user.photoURL,
-      'userType': 'hotel'
+      'hotelName': null,
+      'hotelImageUrl': null,
+      'price': null,
+      'description': null,
+      'rooms': null,
+      'sleeps': null,
+      'location': null,
+      'userType': 'hotel',
+      'date': DateTime.now()
     });
   }
 
