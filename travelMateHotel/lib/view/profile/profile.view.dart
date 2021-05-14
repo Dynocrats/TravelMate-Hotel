@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travelMateHotel/provider/google.signin.dart';
+import 'package:travelMateHotel/service/profile.view.service.dart';
 import 'package:travelMateHotel/view/profile/edit.profile.view.dart';
 
 class Profile extends StatefulWidget {
@@ -9,6 +11,25 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+
+  List<dynamic> userProfile = [];
+
+  // Get User Profile Data in Firestore
+  userProfileMethod() async{
+    final user = FirebaseAuth.instance.currentUser;
+    dynamic result = await UserProfileService().getUserProfile(uid: user.uid);
+    setState(() {
+      userProfile = result;
+    });
+    return userProfile;
+  }
+
+  @override
+  void initState() {
+    userProfileMethod();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,7 +39,7 @@ class _ProfileState extends State<Profile> {
             height: 50.0,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              color: Colors.yellowAccent[100]
+              color: Colors.black
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,16 +54,16 @@ class _ProfileState extends State<Profile> {
                     },
                     child: Container(
                       margin: EdgeInsets.only(top: 15.0, left: 20.0),
-                      child: Text('EDIT', style: TextStyle(fontWeight: FontWeight.bold,),)
+                      child: Text('EDIT', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),)
                     ),
                   )
                 ),
-                Expanded(child: Text('HOTEL NAME', textAlign: TextAlign.center, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),)),
+                Expanded(child: Text('HOTEL NAME', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),)),
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.only(left: 60.0),
                     child: IconButton(
-                      icon: Icon(Icons.logout), 
+                      icon: Icon(Icons.logout, color: Colors.white,), 
                       onPressed: (){
                         final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
                         provider.logout();

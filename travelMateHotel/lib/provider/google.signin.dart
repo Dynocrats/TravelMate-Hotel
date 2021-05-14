@@ -5,7 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
-  
+
   bool _isSigningIn;
 
   GoogleSignInProvider() {
@@ -36,27 +36,39 @@ class GoogleSignInProvider extends ChangeNotifier {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       saveLoginUser();
-      isSigningIn = false; 
+      isSigningIn = false;
     }
   }
 
-  Future saveLoginUser() async{
+  Future saveLoginUser() async {
+    bool userProfile = true;
     final user = FirebaseAuth.instance.currentUser;
     final db = FirebaseFirestore.instance;
-    await db.collection('users').doc(user.uid).set({
-      'userName': user.displayName,
-      'userEmail': user.email,
-      'userImageUrl': user.photoURL,
-      'hotelName': null,
-      'hotelImageUrl': null,
-      'price': null,
-      'description': null,
-      'rooms': null,
-      'sleeps': null,
-      'location': null,
-      'userType': 'hotel',
-      'date': DateTime.now()
+    await db.collection('users').get().then((querySnapshot) {
+      querySnapshot.docs.forEach((element) {
+        if (element.id == user.uid) {
+          userProfile = false;
+        }
+      });
     });
+    if (userProfile) {
+      await db.collection('users').doc(user.uid).set({
+        'userId': user.uid,
+        'userName': user.displayName,
+        'userEmail': user.email,
+        'userImageUrl': user.photoURL,
+        'hotelName': null,
+        'hotelImageUrl': null,
+        'price': null,
+        'description': null,
+        'rooms': null,
+        'sleeps': null,
+        'location': null,
+        'userType': 'hotel',
+        'rate': null,
+        'date': DateTime.now()
+      });
+    }
   }
 
   void logout() async {

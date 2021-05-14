@@ -6,17 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileUpdate extends StatefulWidget {
-
   @override
   _ProfileUpdateState createState() => _ProfileUpdateState();
 }
 
 class _ProfileUpdateState extends State<ProfileUpdate> {
-
-  String hotelName, hotelLocation, hotelDesc, hotelPrice, hotelImageUrl, hotelRooms, hotelSleeps, hotelEmail;
+  String hotelName,
+      hotelLocation,
+      hotelDesc,
+      hotelPrice,
+      hotelImageUrl,
+      hotelRooms,
+      hotelSleeps,
+      hotelEmail;
   final user = FirebaseAuth.instance.currentUser;
   final formKey = GlobalKey<FormState>();
-  final FirebaseStorage storage = FirebaseStorage(storageBucket: 'gs://travelmate-620f4.appspot.com');
+  final FirebaseStorage storage =
+      FirebaseStorage(storageBucket: 'gs://travelmate-620f4.appspot.com');
   StorageUploadTask uploadTask;
   PickedFile imageFile;
   String fileName;
@@ -24,7 +30,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   final db = FirebaseFirestore.instance;
 
   // Select Image gallery or camera
-  selectImage(ImageSource source) async{
+  selectImage(ImageSource source) async {
     final pickedFile = await picker.getImage(source: source);
     setState(() {
       imageFile = pickedFile;
@@ -32,7 +38,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   }
 
   // upload Image Firestore
-    uploadImageFirestore() async{
+  uploadImageFirestore() async {
     String filePath = 'hotels/${DateTime.now()}.jpg';
     setState(() {
       uploadTask = storage.ref().child(filePath).putFile(File(imageFile.path));
@@ -45,23 +51,26 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   }
 
   // Update Data in Firestorage
-  void updateUser() async{
-    await db.collection('users').doc(user.uid)
-    .update({
-      'userName': user.displayName,
-      'userEmail': hotelEmail,
-      'userImageUrl': user.photoURL,
-      'hotelName': hotelName,
-      'hotelImageUrl': hotelImageUrl,
-      'price': hotelPrice,
-      'description': hotelDesc,
-      'rooms': hotelRooms,
-      'sleeps': hotelSleeps,
-      'location': hotelLocation,
-      'userType': 'hotel',
-      'date': DateTime.now()
-    }).then((value) => print("User Updated"))
-    .catchError((error) => print("Failed to update user: $error"));
+  void updateUser() async {
+    await db
+        .collection('users')
+        .doc(user.uid)
+        .update({
+          'userName': user.displayName,
+          'userEmail': hotelEmail,
+          'userImageUrl': user.photoURL,
+          'hotelName': hotelName,
+          'hotelImageUrl': hotelImageUrl,
+          'price': hotelPrice,
+          'description': hotelDesc,
+          'rooms': hotelRooms,
+          'sleeps': hotelSleeps,
+          'location': hotelLocation,
+          'userType': 'hotel',
+          'date': DateTime.now()
+        })
+        .then((value) => print("User Updated"))
+        .catchError((error) => print("Failed to update user: $error"));
   }
 
   @override
@@ -85,9 +94,16 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                       height: 150.0,
                       width: MediaQuery.of(context).size.width,
                       margin: EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                          color: Color(0xFFFD5F1FB),
-                          borderRadius: BorderRadius.circular(6.0)),
+                      decoration: imageFile == null
+                          ? BoxDecoration(
+                              color: Color(0xFFFD5F1FB),
+                              borderRadius: BorderRadius.circular(6.0))
+                          : BoxDecoration(
+                              borderRadius: BorderRadius.circular(6.0),
+                              image: DecorationImage(
+                                  image: FileImage(File(imageFile.path)),
+                                  fit: BoxFit.cover),
+                            ),
                       child: Icon(
                         Icons.add_a_photo,
                         color: Colors.black45,
@@ -294,10 +310,11 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     child: GestureDetector(
                       onTap: () async {
                         if (formKey.currentState.validate()) {
-                          
+                          await uploadImageFirestore();
+                          updateUser();
+                          Navigator.pop(context);
+
                         }
-                        // await uploadImageFirestore();
-                        // updateUser();
                       },
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 16.0),
