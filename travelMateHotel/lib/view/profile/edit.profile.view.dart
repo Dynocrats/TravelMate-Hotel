@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -86,9 +87,13 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                   SizedBox(
                     height: 10.0,
                   ),
+                  Container(
+                    child: Text('Upload Hotel Image[required]', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15),),
+                  ),
+                  SizedBox(height: 10,),
                   GestureDetector(
-                    onDoubleTap: () {
-                      selectImage(ImageSource.camera);
+                    onTap: () {
+                      selectImage(ImageSource.gallery);
                     },
                     child: Container(
                       height: 150.0,
@@ -110,8 +115,12 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 15,),
+                  Container(
+                    child: Text('All Field Required',style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15),),
+                  ),
                   SizedBox(
-                    height: 8,
+                    height: 2,
                   ),
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 16.0),
@@ -290,6 +299,8 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                                       }
                                       return null;
                                     },
+                                    minLines: 1,
+                                    maxLines: 10,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       labelText: 'Description',
@@ -306,29 +317,41 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     height: 20.0,
                   ),
                   GestureDetector(
-                    onTap: () {},
-                    child: GestureDetector(
-                      onTap: () async {
-                        if (formKey.currentState.validate()) {
-                          await uploadImageFirestore();
-                          updateUser();
-                          Navigator.pop(context);
-
-                        }
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 16.0),
-                        width: MediaQuery.of(context).size.width,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: Colors.blueAccent,
-                            borderRadius: BorderRadius.circular(20.0)),
-                        child: Center(
-                            child: Text(
-                          'Update Profile',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        )),
-                      ),
+                    onTap: () async {
+                      if (formKey.currentState.validate()) {
+                        await uploadImageFirestore();
+                        updateUser();
+                        AwesomeDialog(
+                          context: context,
+                          animType: AnimType.BOTTOMSLIDE,
+                          headerAnimationLoop: false,
+                          dialogType: DialogType.SUCCES,
+                          title: 'Succes',
+                          desc: 'your prifile update succefuly!',
+                          dismissOnTouchOutside: false,
+                          btnOkOnPress: () {
+                            debugPrint('OnClcik');
+                            Navigator.pop(context);
+                          },
+                          btnOkIcon: Icons.check_circle,
+                          onDissmissCallback: () {
+                            debugPrint('Dialog Dissmiss from callback');
+                          })
+                        ..show();
+                      }
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16.0),
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: Colors.blueAccent,
+                          borderRadius: BorderRadius.circular(20.0)),
+                      child: Center(
+                          child: Text(
+                        'Update Profile',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      )),
                     ),
                   )
                 ],

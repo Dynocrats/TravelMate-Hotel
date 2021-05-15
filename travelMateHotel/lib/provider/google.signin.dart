@@ -65,7 +65,7 @@ class GoogleSignInProvider extends ChangeNotifier {
         'sleeps': null,
         'location': null,
         'userType': 'hotel',
-        'rate': null,
+        'rate': 0,
         'date': DateTime.now()
       });
     }
