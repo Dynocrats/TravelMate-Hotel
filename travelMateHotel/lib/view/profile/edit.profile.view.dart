@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -6,17 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileUpdate extends StatefulWidget {
-
   @override
   _ProfileUpdateState createState() => _ProfileUpdateState();
 }
 
 class _ProfileUpdateState extends State<ProfileUpdate> {
-
-  String hotelName, hotelLocation, hotelDesc, hotelPrice, hotelImageUrl, hotelRooms, hotelSleeps, hotelEmail;
+  String hotelName,
+      hotelLocation,
+      hotelDesc,
+      hotelPrice,
+      hotelImageUrl,
+      hotelRooms,
+      hotelSleeps,
+      hotelEmail;
   final user = FirebaseAuth.instance.currentUser;
   final formKey = GlobalKey<FormState>();
-  final FirebaseStorage storage = FirebaseStorage(storageBucket: 'gs://travelmate-620f4.appspot.com');
+  final FirebaseStorage storage =
+      FirebaseStorage(storageBucket: 'gs://travelmate-620f4.appspot.com');
   StorageUploadTask uploadTask;
   PickedFile imageFile;
   String fileName;
@@ -24,7 +31,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   final db = FirebaseFirestore.instance;
 
   // Select Image gallery or camera
-  selectImage(ImageSource source) async{
+  selectImage(ImageSource source) async {
     final pickedFile = await picker.getImage(source: source);
     setState(() {
       imageFile = pickedFile;
@@ -32,7 +39,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   }
 
   // upload Image Firestore
-    uploadImageFirestore() async{
+  uploadImageFirestore() async {
     String filePath = 'hotels/${DateTime.now()}.jpg';
     setState(() {
       uploadTask = storage.ref().child(filePath).putFile(File(imageFile.path));
@@ -45,23 +52,26 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   }
 
   // Update Data in Firestorage
-  void updateUser() async{
-    await db.collection('users').doc(user.uid)
-    .update({
-      'userName': user.displayName,
-      'userEmail': hotelEmail,
-      'userImageUrl': user.photoURL,
-      'hotelName': hotelName,
-      'hotelImageUrl': hotelImageUrl,
-      'price': hotelPrice,
-      'description': hotelDesc,
-      'rooms': hotelRooms,
-      'sleeps': hotelSleeps,
-      'location': hotelLocation,
-      'userType': 'hotel',
-      'date': DateTime.now()
-    }).then((value) => print("User Updated"))
-    .catchError((error) => print("Failed to update user: $error"));
+  void updateUser() async {
+    await db
+        .collection('users')
+        .doc(user.uid)
+        .update({
+          'userName': user.displayName,
+          'userEmail': hotelEmail,
+          'userImageUrl': user.photoURL,
+          'hotelName': hotelName,
+          'hotelImageUrl': hotelImageUrl,
+          'price': hotelPrice,
+          'description': hotelDesc,
+          'rooms': hotelRooms,
+          'sleeps': hotelSleeps,
+          'location': hotelLocation,
+          'userType': 'hotel',
+          'date': DateTime.now()
+        })
+        .then((value) => print("User Updated"))
+        .catchError((error) => print("Failed to update user: $error"));
   }
 
   @override
@@ -74,83 +84,231 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               key: formKey,
               child: Column(
                 children: [
-                  SizedBox(height: 50.0,),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Container(
+                    child: Text('Upload Hotel Image[required]', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15),),
+                  ),
+                  SizedBox(height: 10,),
                   GestureDetector(
-                    onDoubleTap: (){
-                      selectImage(ImageSource.camera);
+                    onTap: () {
+                      selectImage(ImageSource.gallery);
                     },
                     child: Container(
                       height: 150.0,
                       width: MediaQuery.of(context).size.width,
                       margin: EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(6.0)
+                      decoration: imageFile == null
+                          ? BoxDecoration(
+                              color: Color(0xFFFD5F1FB),
+                              borderRadius: BorderRadius.circular(6.0))
+                          : BoxDecoration(
+                              borderRadius: BorderRadius.circular(6.0),
+                              image: DecorationImage(
+                                  image: FileImage(File(imageFile.path)),
+                                  fit: BoxFit.cover),
+                            ),
+                      child: Icon(
+                        Icons.add_a_photo,
+                        color: Colors.black45,
                       ),
-                      child: Icon(Icons.add_a_photo, color: Colors.black45,),
                     ),
                   ),
-                  SizedBox(height: 8,),
+                  SizedBox(height: 15,),
+                  Container(
+                    child: Text('All Field Required',style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15),),
+                  ),
+                  SizedBox(
+                    height: 2,
+                  ),
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                       children: [
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Hotel Name'
-                          ),
-                          onChanged: (value){
-                            hotelName = value;
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFD5F1FB),
+                                borderRadius: new BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5),
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please Enter Hotel Name';
+                                      }
+                                      return null;
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      labelText: 'Hotel Name',
+                                    ),
+                                    onChanged: (value) {
+                                      hotelName = value;
+                                    },
+                                  ))),
                         ),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Email'
-                          ),
-                          onChanged: (value){
-                            hotelEmail = value;
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFD5F1FB),
+                                borderRadius: new BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5),
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please Enter Email';
+                                      }
+                                      return null;
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      labelText: 'Email',
+                                    ),
+                                    onChanged: (value) {
+                                      hotelEmail = value;
+                                    },
+                                  ))),
                         ),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Day One Price'
-                          ),
-                          onChanged: (value){
-                            hotelPrice = value;
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFD5F1FB),
+                                borderRadius: new BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5),
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please Enter Day One Price';
+                                      }
+                                      return null;
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      labelText: 'Day One Price',
+                                    ),
+                                    onChanged: (value) {
+                                      hotelPrice = value;
+                                    },
+                                  ))),
                         ),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Room'
-                          ),
-                          onChanged: (value){
-                            hotelRooms = value;
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFD5F1FB),
+                                borderRadius: new BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5),
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please Enter Rooms';
+                                      }
+                                      return null;
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      labelText: 'Rooms',
+                                    ),
+                                    onChanged: (value) {
+                                      hotelRooms = value;
+                                    },
+                                  ))),
                         ),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Sleeps'
-                          ),
-                          onChanged: (value){
-                            hotelSleeps = value;
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFD5F1FB),
+                                borderRadius: new BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5),
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please Enter Sleeps';
+                                      }
+                                      return null;
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      labelText: 'Sleeps',
+                                    ),
+                                    onChanged: (value) {
+                                      hotelSleeps = value;
+                                    },
+                                  ))),
                         ),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Location Link'
-                          ),
-                          onChanged: (value){
-                            hotelLocation = value;
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFD5F1FB),
+                                borderRadius: new BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5),
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please Enter Location Link';
+                                      }
+                                      return null;
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      labelText: 'Location Link',
+                                    ),
+                                    onChanged: (value) {
+                                      hotelLocation = value;
+                                    },
+                                  ))),
                         ),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Description'
-                          ),
-                          maxLines: 5,
-                          onChanged: (value){
-                            hotelDesc = value;
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFD5F1FB),
+                                borderRadius: new BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5),
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please Enter Description';
+                                      }
+                                      return null;
+                                    },
+                                    minLines: 1,
+                                    maxLines: 10,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      labelText: 'Description',
+                                    ),
+                                    onChanged: (value) {
+                                      hotelDesc = value;
+                                    },
+                                  ))),
                         ),
                       ],
                     ),
@@ -159,26 +317,41 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     height: 20.0,
                   ),
                   GestureDetector(
-                    onTap: () {
-                      
-                    },
-                    child: GestureDetector(
-                      onTap: () async{
-                       await uploadImageFirestore();
+                    onTap: () async {
+                      if (formKey.currentState.validate()) {
+                        await uploadImageFirestore();
                         updateUser();
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 16.0),
-                        width: MediaQuery.of(context).size.width,
-                        height: 50,
-                        decoration: BoxDecoration(
+                        AwesomeDialog(
+                          context: context,
+                          animType: AnimType.BOTTOMSLIDE,
+                          headerAnimationLoop: false,
+                          dialogType: DialogType.SUCCES,
+                          title: 'Succes',
+                          desc: 'your prifile update succefuly!',
+                          dismissOnTouchOutside: false,
+                          btnOkOnPress: () {
+                            debugPrint('OnClcik');
+                            Navigator.pop(context);
+                          },
+                          btnOkIcon: Icons.check_circle,
+                          onDissmissCallback: () {
+                            debugPrint('Dialog Dissmiss from callback');
+                          })
+                        ..show();
+                      }
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16.0),
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      decoration: BoxDecoration(
                           color: Colors.blueAccent,
-                          borderRadius: BorderRadius.circular(20.0)
-                        ),
-                        child: Center(
-                          child: Text('Create Post', style: TextStyle(fontSize: 20, color: Colors.white),)
-                        ),
-                      ),
+                          borderRadius: BorderRadius.circular(20.0)),
+                      child: Center(
+                          child: Text(
+                        'Update Profile',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      )),
                     ),
                   )
                 ],

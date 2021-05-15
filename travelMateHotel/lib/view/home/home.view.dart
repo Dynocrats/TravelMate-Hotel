@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:paginate_firestore/paginate_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:travelMateHotel/provider/user.profile.dart';
+import 'package:travelMateHotel/service/home.page.service.dart';
 import 'package:travelMateHotel/view/postView/post.view.dart';
 
 class Home extends StatefulWidget {
@@ -9,6 +13,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+    final UserProfileBloc userProfileBloc = Provider.of<UserProfileBloc>(context);
     return SafeArea(
         child: Container(
       padding: EdgeInsets.all(10),
@@ -37,13 +42,20 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-                physics: BouncingScrollPhysics(), // test this
-                itemExtent: 250.0,
-                itemCount: 10,
-                itemBuilder: (BuildContext context, int index) {
+            child: PaginateFirestore(
+                physics: BouncingScrollPhysics(),
+                query: AllUserProfile().allUserProfile(), // test this
+                itemBuilderType: PaginateBuilderType.listView,
+                itemBuilder: (index, BuildContext context, documentSnapshot) {
                   return GestureDetector(
                     onTap: () {
+                      userProfileBloc.changeUserProfileBloc(
+                        hotelName: documentSnapshot.data()['hotelName'], 
+                        hotelLocation: documentSnapshot.data()['location'], 
+                        hotelImageUrl: documentSnapshot.data()['hotelImageUrl'], 
+                        hotelDesc: documentSnapshot.data()['description'], 
+                        hotelPrice: documentSnapshot.data()['price']
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => PostView()),
@@ -52,6 +64,7 @@ class _HomeState extends State<Home> {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 15, left: 5, right: 5),
                       child: Container(
+                        height: 250.0,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           color: Colors.white,
@@ -74,7 +87,7 @@ class _HomeState extends State<Home> {
                                     topRight: Radius.circular(15)
                                 ),
                                 image: DecorationImage(
-                                    image: AssetImage('images/hotel.jpg'),
+                                    image: NetworkImage(documentSnapshot.data()['hotelImageUrl'] ?? documentSnapshot.data()['userImageUrl']),
                                     fit: BoxFit.cover
                                 ),
                               ),
@@ -89,7 +102,7 @@ class _HomeState extends State<Home> {
                                       child:Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('HOTEL NAME', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),),
+                                          Text(documentSnapshot.data()['hotelName'] ?? 'HOTEL NAME', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),),
                                           SizedBox(height: 5.0,),
                                           Row(
                                             children: [
@@ -107,7 +120,7 @@ class _HomeState extends State<Home> {
                                       child:Column(
                                         crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
-                                          Text('For Day  USD8.50', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 15),),
+                                          Text('For Day  USD ${documentSnapshot.data()['price']}', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 15),),
                                           SizedBox(height: 5.0,),
                                           Row(
                                             crossAxisAlignment: CrossAxisAlignment.end,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:travelMateHotel/provider/user.profile.dart';
 
 class PostView extends StatefulWidget {
   @override
@@ -8,6 +10,7 @@ class PostView extends StatefulWidget {
 class _PostViewState extends State<PostView> {
   @override
   Widget build(BuildContext context) {
+    final UserProfileBloc userProfileBloc = Provider.of<UserProfileBloc>(context);
     return Scaffold(
       body: Column(
         children: [
@@ -15,7 +18,7 @@ class _PostViewState extends State<PostView> {
             height: 400.0,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('images/hotel.jpg'), fit: BoxFit.cover),
+                    image: NetworkImage(userProfileBloc.getHotelImageUrl()) ?? AssetImage('images/hotel.jpg'), fit: BoxFit.cover),
                 borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(50.0),
                     bottomRight: Radius.circular(50.0))),
@@ -46,7 +49,7 @@ class _PostViewState extends State<PostView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'HOTEL NAME',
+                                userProfileBloc.hotelName ?? 'HOTEL NAME',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
@@ -71,7 +74,7 @@ class _PostViewState extends State<PostView> {
                         )),
                         Expanded(
                         child: Container(
-                          child: Text('USD7.5 / one day', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),),
+                          child: Text('USD ${userProfileBloc.hotelPrice} / one day', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),),
                         )),
                       ],
                     ),
@@ -80,7 +83,7 @@ class _PostViewState extends State<PostView> {
                   Container(
                     margin: EdgeInsets.only(left: 20.0, right: 20.0),
                     child: Text(
-                      'Lorem ipsum dolor sit amet consectetur adipiscing, elit neque aliquam per dignissim, eu sociosqu aliquet ut lacus. Nibh facilisi nullam potenti aliquam vivamus metus habitant in tempus lobortis, vulputate et diam orci vitae primis nec semper taciti phasellus, eleifend fames blandit facilisis netus congue nulla posuere tellus. Cursus vestibulum est sociis blandit mauris lectus ante luctus venenatis class ultrices, pharetra pretium penatibus habitasse aliquam euismod porttitor aliquet id.',
+                      userProfileBloc.hotelDesc ?? 'Lorem ipsum dolor sit amet consectetur adipiscing, elit neque aliquam per dignissim, eu sociosqu aliquet ut lacus. Nibh facilisi nullam potenti aliquam vivamus metus habitant in tempus lobortis, vulputate et diam orci vitae primis nec semper taciti phasellus, eleifend fames blandit facilisis netus congue nulla posuere tellus. Cursus vestibulum est sociis blandit mauris lectus ante luctus venenatis class ultrices, pharetra pretium penatibus habitasse aliquam euismod porttitor aliquet id.',
                       textAlign: TextAlign.justify,
                     ),
                   ),

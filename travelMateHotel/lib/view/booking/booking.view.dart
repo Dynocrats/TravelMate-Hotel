@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:paginate_firestore/paginate_firestore.dart';
+import 'package:travelMateHotel/service/booking.service.dart';
 import 'package:travelMateHotel/widget/avatar.dart';
 
 class Booking extends StatefulWidget {
@@ -10,16 +12,17 @@ class _BookingState extends State<Booking> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: ListView.builder(
+        child: PaginateFirestore(
             physics: BouncingScrollPhysics(),
-            itemExtent: 240.0,
-            itemCount: 10,
-            itemBuilder: (BuildContext context, int index) {
+            query: AllBooking().allBooking(),
+            itemBuilderType: PaginateBuilderType.listView,
+            itemBuilder: (index, BuildContext context, documentSnapshot) {
               return GestureDetector(
                 child: Padding(
                   padding: const EdgeInsets.only(
                       top: 8, right: 12, bottom: 8, left: 12),
                   child: Container(
+                    height: 240.0,
                     decoration: BoxDecoration(
                         color: Colors.lightBlue[100],
                         borderRadius: BorderRadius.circular(15.0)),
