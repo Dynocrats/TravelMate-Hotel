@@ -14,7 +14,6 @@ Future<void> main() async {
     ],
     child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(primarySwatch: Colors.deepOrange),
         home: HomePage(),
       ),
   );
