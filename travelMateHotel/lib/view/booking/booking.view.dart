@@ -11,7 +11,22 @@ class Booking extends StatefulWidget {
 class _BookingState extends State<Booking> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Booking Details'),
+        backgroundColor: Colors.black,
+        centerTitle: true,
+      ),
+        body: Container(
+        decoration: BoxDecoration(
+                gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Colors.blue,
+                Colors.green,
+              ],
+        )),
         child: PaginateFirestore(
             physics: BouncingScrollPhysics(),
             query: AllBooking().allBooking(),
@@ -20,7 +35,7 @@ class _BookingState extends State<Booking> {
               return GestureDetector(
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      top: 8, right: 12, bottom: 8, left: 12),
+                      top: 16, right: 12, left: 12),
                   child: Container(
                     height: 240.0,
                     decoration: BoxDecoration(
@@ -32,7 +47,7 @@ class _BookingState extends State<Booking> {
                           children: [
                             Container(
                               margin: EdgeInsets.only(top: 15.0, left: 15.0, bottom: 10.0),
-                              child: profileAvatar(imgUrl: 'images/hotel.jpg', radius: 35),
+                              child: profileAvatarNetwork(imgUrl: documentSnapshot.data()['userUrl'], radius: 35),
                             ),
                             Expanded(
                               child: Container(
@@ -41,9 +56,9 @@ class _BookingState extends State<Booking> {
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     Text('ROOMS', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),),
-                                    Text('5', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),),
+                                    Text(documentSnapshot.data()['room'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),),
                                     Text('PEOPLES', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),),
-                                    Text('7', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),)
+                                    Text(documentSnapshot.data()['sleep'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),)
                                   ],
                                 ),
                               )
@@ -56,11 +71,12 @@ class _BookingState extends State<Booking> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('THARINDU KAVISHNA', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),),
+                                Text(documentSnapshot.data()['userName'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),),
                                 SizedBox(height: 3.0,),
-                                Text('2021-04-21 - 2021-05-06', style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 10),),
+                                Text('${documentSnapshot.data()['start-date']} - ${documentSnapshot.data()['end-date']}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 10),),
                                 SizedBox(height: 15.0,),
-                                Text('Learning is the process of acquiring new understanding, knowledge, behaviors, skills, values, attitudes Learning is the process of acquiring new understanding, knowledge, behaviors, skills, values, attitudes Learning is the process of acquiring new understanding, knowledge, behaviors, skills, values, attitudes', textAlign: TextAlign.justify,),
+                                Expanded(child: Text(documentSnapshot.data()['userDesc'], textAlign: TextAlign.justify,)),
+                                SizedBox(height: 15.0,),
                               ],
                             ),
                           )
@@ -70,6 +86,8 @@ class _BookingState extends State<Booking> {
                   ),
                 ),
               );
-            }));
+            }),
+      ),
+    );
   }
 }

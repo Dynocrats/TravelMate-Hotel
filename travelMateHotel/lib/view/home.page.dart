@@ -34,8 +34,20 @@ class HomePage extends StatelessWidget {
   Widget buildLoading() => Stack(
         fit: StackFit.expand,
         children: [
-          CustomPaint(painter: BackgroundPainter()),
-          Center(child: CircularProgressIndicator()),
+          // CustomPaint(painter: BackgroundPainter()),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Colors.blue,
+                  Colors.green,
+                ],
+              )
+          ),
+            child: Center(child: CircularProgressIndicator())
+          ),
         ],
       );
 }

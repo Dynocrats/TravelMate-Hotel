@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:travelMateHotel/widget/custom.btn.dart';
 
 class ProfileUpdate extends StatefulWidget {
   @override
@@ -29,6 +30,9 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   String fileName;
   final ImagePicker picker = ImagePicker();
   final db = FirebaseFirestore.instance;
+
+  // Loading State
+  bool updateProfile = false;
 
   // Select Image gallery or camera
   selectImage(ImageSource source) async {
@@ -77,288 +81,314 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          Container(
-            child: Form(
-              key: formKey,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Container(
-                    child: Text('Upload Hotel Image[required]', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15),),
-                  ),
-                  SizedBox(height: 10,),
-                  GestureDetector(
-                    onTap: () {
-                      selectImage(ImageSource.gallery);
-                    },
-                    child: Container(
-                      height: 150.0,
-                      width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.symmetric(horizontal: 16),
-                      decoration: imageFile == null
-                          ? BoxDecoration(
-                              color: Color(0xFFFD5F1FB),
-                              borderRadius: BorderRadius.circular(6.0))
-                          : BoxDecoration(
-                              borderRadius: BorderRadius.circular(6.0),
-                              image: DecorationImage(
-                                  image: FileImage(File(imageFile.path)),
-                                  fit: BoxFit.cover),
-                            ),
-                      child: Icon(
-                        Icons.add_a_photo,
-                        color: Colors.black45,
+      body: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            Colors.blue,
+            Colors.green,
+          ],
+        )),
+        child: ListView(
+          children: [
+            Container(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Container(
+                      child: Text(
+                        'Upload Hotel Image[required]',
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 15,),
-                  Container(
-                    child: Text('All Field Required',style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15),),
-                  ),
-                  SizedBox(
-                    height: 2,
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFD5F1FB),
-                                borderRadius: new BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5),
-                                  child: TextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Hotel Name';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      labelText: 'Hotel Name',
-                                    ),
-                                    onChanged: (value) {
-                                      hotelName = value;
-                                    },
-                                  ))),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFD5F1FB),
-                                borderRadius: new BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5),
-                                  child: TextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Email';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      labelText: 'Email',
-                                    ),
-                                    onChanged: (value) {
-                                      hotelEmail = value;
-                                    },
-                                  ))),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFD5F1FB),
-                                borderRadius: new BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5),
-                                  child: TextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Day One Price';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      labelText: 'Day One Price',
-                                    ),
-                                    onChanged: (value) {
-                                      hotelPrice = value;
-                                    },
-                                  ))),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFD5F1FB),
-                                borderRadius: new BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5),
-                                  child: TextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Rooms';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      labelText: 'Rooms',
-                                    ),
-                                    onChanged: (value) {
-                                      hotelRooms = value;
-                                    },
-                                  ))),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFD5F1FB),
-                                borderRadius: new BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5),
-                                  child: TextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Sleeps';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      labelText: 'Sleeps',
-                                    ),
-                                    onChanged: (value) {
-                                      hotelSleeps = value;
-                                    },
-                                  ))),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFD5F1FB),
-                                borderRadius: new BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5),
-                                  child: TextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Location Link';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      labelText: 'Location Link',
-                                    ),
-                                    onChanged: (value) {
-                                      hotelLocation = value;
-                                    },
-                                  ))),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFD5F1FB),
-                                borderRadius: new BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5),
-                                  child: TextFormField(
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Description';
-                                      }
-                                      return null;
-                                    },
-                                    minLines: 1,
-                                    maxLines: 10,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      labelText: 'Description',
-                                    ),
-                                    onChanged: (value) {
-                                      hotelDesc = value;
-                                    },
-                                  ))),
-                        ),
-                      ],
+                    SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (formKey.currentState.validate()) {
-                        await uploadImageFirestore();
-                        updateUser();
-                        AwesomeDialog(
-                          context: context,
-                          animType: AnimType.BOTTOMSLIDE,
-                          headerAnimationLoop: false,
-                          dialogType: DialogType.SUCCES,
-                          title: 'Succes',
-                          desc: 'your prifile update succefuly!',
-                          dismissOnTouchOutside: false,
-                          btnOkOnPress: () {
-                            debugPrint('OnClcik');
-                            Navigator.pop(context);
-                          },
-                          btnOkIcon: Icons.check_circle,
-                          onDissmissCallback: () {
-                            debugPrint('Dialog Dissmiss from callback');
-                          })
-                        ..show();
-                      }
-                    },
-                    child: Container(
+                    GestureDetector(
+                      onTap: () {
+                        selectImage(ImageSource.gallery);
+                      },
+                      child: Container(
+                        height: 150.0,
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.symmetric(horizontal: 16),
+                        decoration: imageFile == null
+                            ? BoxDecoration(
+                                color: Color(0xFFFD5F1FB),
+                                borderRadius: BorderRadius.circular(6.0))
+                            : BoxDecoration(
+                                borderRadius: BorderRadius.circular(6.0),
+                                image: DecorationImage(
+                                    image: FileImage(File(imageFile.path)),
+                                    fit: BoxFit.cover),
+                              ),
+                        child: Icon(
+                          Icons.add_a_photo,
+                          color: Colors.black45,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      child: Text(
+                        'All Field Required',
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Container(
                       margin: EdgeInsets.symmetric(horizontal: 16.0),
-                      width: MediaQuery.of(context).size.width,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          color: Colors.blueAccent,
-                          borderRadius: BorderRadius.circular(20.0)),
-                      child: Center(
-                          child: Text(
-                        'Update Profile',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      )),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFD5F1FB),
+                                  borderRadius: new BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 15, right: 15, top: 5),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please Enter Hotel Name';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: 'Hotel Name',
+                                      ),
+                                      onChanged: (value) {
+                                        hotelName = value;
+                                      },
+                                    ))),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFD5F1FB),
+                                  borderRadius: new BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 15, right: 15, top: 5),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please Enter Email';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: 'Email',
+                                      ),
+                                      onChanged: (value) {
+                                        hotelEmail = value;
+                                      },
+                                    ))),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFD5F1FB),
+                                  borderRadius: new BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 15, right: 15, top: 5),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please Enter Day One Price';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: 'Day One Price',
+                                      ),
+                                      onChanged: (value) {
+                                        hotelPrice = value;
+                                      },
+                                    ))),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFD5F1FB),
+                                  borderRadius: new BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 15, right: 15, top: 5),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please Enter Rooms';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: 'Rooms',
+                                      ),
+                                      onChanged: (value) {
+                                        hotelRooms = value;
+                                      },
+                                    ))),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFD5F1FB),
+                                  borderRadius: new BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 15, right: 15, top: 5),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please Enter Sleeps';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: 'Sleeps',
+                                      ),
+                                      onChanged: (value) {
+                                        hotelSleeps = value;
+                                      },
+                                    ))),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFD5F1FB),
+                                  borderRadius: new BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 15, right: 15, top: 5),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please Enter Location Link';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: 'Location Link',
+                                      ),
+                                      onChanged: (value) {
+                                        hotelLocation = value;
+                                      },
+                                    ))),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFD5F1FB),
+                                  borderRadius: new BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 15, right: 15, top: 5),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please Enter Description';
+                                        }
+                                        return null;
+                                      },
+                                      minLines: 1,
+                                      maxLines: 10,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: 'Description',
+                                      ),
+                                      onChanged: (value) {
+                                        hotelDesc = value;
+                                      },
+                                    ))),
+                          ),
+                        ],
+                      ),
                     ),
-                  )
-                ],
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    UpdateBtn(
+                      text: 'Update Profile',
+                      onPressed: () async {
+                        if (formKey.currentState.validate()) {
+                          setState(() {
+                            updateProfile = true;
+                          });
+                          await uploadImageFirestore();
+                          updateUser();
+                          setState(() {
+                            updateProfile = false;
+                          });
+                          AwesomeDialog(
+                              context: context,
+                              animType: AnimType.BOTTOMSLIDE,
+                              headerAnimationLoop: false,
+                              dialogType: DialogType.SUCCES,
+                              title: 'Succes',
+                              desc: 'your prifile update succefuly!',
+                              dismissOnTouchOutside: false,
+                              btnOkOnPress: () {
+                                debugPrint('OnClcik');
+                                Navigator.pop(context);
+                              },
+                              btnOkIcon: Icons.check_circle,
+                              onDissmissCallback: () {
+                                debugPrint('Dialog Dissmiss from callback');
+                              })
+                            ..show();
+                        }
+                        print('Upload Profile');
+                      },
+                      isLoading: updateProfile,
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

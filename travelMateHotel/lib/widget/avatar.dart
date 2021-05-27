@@ -14,3 +14,17 @@ Widget profileAvatar({String imgUrl, double radius}) {
     radius: radius,
   );
 }
+
+Widget profileAvatarNetwork({String imgUrl, double radius}) {
+  return CircularProfileAvatar(
+    null,
+    child: Image(
+      image: NetworkImage(imgUrl),
+      fit: BoxFit.cover,
+    ),
+    borderColor: Colors.white,
+    borderWidth: 1,
+    elevation: 2,
+    radius: radius,
+  );
+}
